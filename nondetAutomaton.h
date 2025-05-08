@@ -34,6 +34,7 @@ public:
 
     bool operator()(std::string s);
     void operator=(nondetAutomaton &aut);
+    nondetAutomaton operator+(nondetAutomaton &aut);
     finiteAutomaton operator!();
 
 

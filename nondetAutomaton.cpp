@@ -208,6 +208,46 @@ finiteAutomaton nondetAutomaton::operator!() {
     return aut;
 }
 
+nondetAutomaton nondetAutomaton::operator+(nondetAutomaton &aut) {
+     nondetAutomaton newAut = nondetAutomaton();
+     map<pair<int, char>, set<int>>::iterator i;
+     set<int>::iterator j;
+     if (statesAmount == 0) {
+        return aut;
+     }
+     if (aut.statesAmount == 0) {
+        return *this;
+     }
+     newAut.statesAmount = statesAmount + aut.statesAmount + 1;
+     newAut.addTransition(0, '\0', 1 + startStateIndex);
+     newAut.addTransition(0, '\0', statesAmount + 1 + startStateIndex);
+     for (const auto &state : acceptStates) {
+        newAut.acceptStates.insert(state + 1);
+     }
+     for (const auto &state : aut.acceptStates) {
+        newAut.acceptStates.insert(state + 1 + statesAmount);
+     }
+     pair<pair<int, char>, set<int>> newTransition;
+     for (const auto &transition : transitionMap) {
+        newTransition.first = {transition.first.first + 1, transition.first.second};
+        newTransition.second = {};
+        for (const auto &elem : transition.second) {
+            newTransition.second.insert(elem + 1);
+        }
+        aut.transitionMap.insert(newTransition);
+     }
+     for (const auto &transition : aut.transitionMap) {
+        newTransition.first = {transition.first.first + 1 + statesAmount, transition.first.second};
+        newTransition.second = {};
+        for (const auto &elem : transition.second) {
+            newTransition.second.insert(elem + 1 + statesAmount);
+        }
+        aut.transitionMap.insert(newTransition);
+
+     }
+     
+}
+
 ostream & operator<<(ostream &os, nondetAutomaton &aut) {
     set<int> transitionStates;
     set<int>::iterator i;
