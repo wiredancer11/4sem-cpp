@@ -212,41 +212,70 @@ nondetAutomaton nondetAutomaton::operator+(nondetAutomaton &aut) {
      nondetAutomaton newAut = nondetAutomaton();
      map<pair<int, char>, set<int>>::iterator i;
      set<int>::iterator j;
-     if (statesAmount == 0) {
-        return aut;
-     }
-     if (aut.statesAmount == 0) {
-        return *this;
-     }
+     if (statesAmount == 0) return aut;
+     
+     if (aut.statesAmount == 0) return *this;
+    
      newAut.statesAmount = statesAmount + aut.statesAmount + 1;
      newAut.addTransition(0, '\0', 1 + startStateIndex);
      newAut.addTransition(0, '\0', statesAmount + 1 + startStateIndex);
+
+
      for (const auto &state : acceptStates) {
         newAut.acceptStates.insert(state + 1);
      }
+
+
      for (const auto &state : aut.acceptStates) {
         newAut.acceptStates.insert(state + 1 + statesAmount);
      }
-     pair<pair<int, char>, set<int>> newTransition;
-     for (const auto &transition : transitionMap) {
-        newTransition.first = {transition.first.first + 1, transition.first.second};
-        newTransition.second = {};
-        for (const auto &elem : transition.second) {
-            newTransition.second.insert(elem + 1);
-        }
-        aut.transitionMap.insert(newTransition);
-     }
-     for (const auto &transition : aut.transitionMap) {
-        newTransition.first = {transition.first.first + 1 + statesAmount, transition.first.second};
-        newTransition.second = {};
-        for (const auto &elem : transition.second) {
-            newTransition.second.insert(elem + 1 + statesAmount);
-        }
-        aut.transitionMap.insert(newTransition);
 
+
+     for (const auto &transition : transitionMap) {
+        for (const auto &elem : transition.second) {
+            newAut.addTransition(transition.first.first + 1, transition.first.second, elem + 1);
+        }
      }
-     
+
+
+     for (const auto &transition : aut.transitionMap) {
+        for (const auto &elem : transition.second) {
+            newAut.addTransition(transition.first.first + 1 + statesAmount, transition.first.second, elem + 1 + statesAmount);
+        }
+     }
+     return newAut;
 }
+
+nondetAutomaton nondetAutomaton::operator*(nondetAutomaton &aut) {
+    nondetAutomaton newAut = nondetAutomaton();
+    newAut.statesAmount = statesAmount + aut.statesAmount; 
+    for (const auto & state : acceptStates) {
+        newAut.addTransition(state, '\0', statesAmount + aut.startStateIndex);
+    }
+
+    newAut.transitionMap = transitionMap;
+
+    for (const auto &transition : aut.transitionMap) {
+        for (const auto & state : transition.second) {
+           newAut.addTransition(transition.first.first + statesAmount, transition.first.second, state + statesAmount);
+        }
+    }
+    bool acceptsEmpty = false;
+    set<int> epsilonClosure = {aut.startStateIndex};
+    doEpsilonTransitions(epsilonClosure);
+    for (const auto &state : epsilonClosure) {
+        if (aut.acceptStates.count(state) > 0) {acceptsEmpty = true; break;};
+    }
+    if (acceptsEmpty) newAut.acceptStates = acceptStates;
+    for (const auto &state : aut.acceptStates) {
+        newAut.makeAcceptState(state + statesAmount);
+    }
+
+    return newAut;
+
+}
+
+
 
 ostream & operator<<(ostream &os, nondetAutomaton &aut) {
     set<int> transitionStates;
