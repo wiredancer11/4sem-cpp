@@ -96,7 +96,7 @@ void nondetAutomaton::renumberStates(map<int, int> renumMap) {
     transitionMap = newTransitionMap;
 }
 
-void nondetAutomaton::doEpsilonTransitions(set<int> &activeStates) {
+void nondetAutomaton::doEpsilonTransitions(set<int> &activeStates) const {
     set<int> availableStates;
     set<int>::iterator i, j;
     bool isInserted = false;
@@ -142,14 +142,14 @@ bool nondetAutomaton::operator()(string s) {
     return false;
 }
 
-void nondetAutomaton::operator=(nondetAutomaton &aut) {
+void nondetAutomaton::operator=(const nondetAutomaton &aut) {
     statesAmount = aut.statesAmount;
     startStateIndex = aut.startStateIndex;
     acceptStates = aut.acceptStates;
     transitionMap = aut.transitionMap;
 }
 
-finiteAutomaton nondetAutomaton::operator!() {
+finiteAutomaton nondetAutomaton::operator!() const{
     vector<set<int>> subsets = get_all_subsets(statesAmount);
     set<int> subset;
     vector<set<int>> epsilonClosedSubsets;
@@ -208,7 +208,7 @@ finiteAutomaton nondetAutomaton::operator!() {
     return aut;
 }
 
-nondetAutomaton nondetAutomaton::operator+(nondetAutomaton &aut) {
+nondetAutomaton nondetAutomaton::operator+(const nondetAutomaton &aut) {
      nondetAutomaton newAut = nondetAutomaton();
      map<pair<int, char>, set<int>>::iterator i;
      set<int>::iterator j;
@@ -246,14 +246,14 @@ nondetAutomaton nondetAutomaton::operator+(nondetAutomaton &aut) {
      return newAut;
 }
 
-nondetAutomaton nondetAutomaton::operator*(nondetAutomaton &aut) {
+nondetAutomaton nondetAutomaton::operator*(const nondetAutomaton &aut) {
     nondetAutomaton newAut = nondetAutomaton();
     newAut.statesAmount = statesAmount + aut.statesAmount; 
+    newAut.transitionMap = transitionMap;
     for (const auto & state : acceptStates) {
         newAut.addTransition(state, '\0', statesAmount + aut.startStateIndex);
     }
 
-    newAut.transitionMap = transitionMap;
 
     for (const auto &transition : aut.transitionMap) {
         for (const auto & state : transition.second) {
@@ -288,8 +288,8 @@ nondetAutomaton nondetAutomaton::operator*() {
 }
 
 
-finiteAutomaton nondetAutomaton::operator%(nondetAutomaton &aut) {
-        return !*this % !aut;
+finiteAutomaton nondetAutomaton::operator%(const nondetAutomaton &aut) {
+        return !*this % (!aut);
 }
 
 

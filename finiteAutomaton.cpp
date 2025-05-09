@@ -191,22 +191,20 @@ map<int,int> finiteAutomaton::optimize() {
     return optimizationMap;
 }
 
-bool finiteAutomaton::operator==(finiteAutomaton& aut2) {
+bool finiteAutomaton::operator==(const finiteAutomaton& aut2) {
     finiteAutomaton unionAutomaton = finiteAutomaton(*this);  
     unionAutomaton.statesAmount += aut2.statesAmount;
-    set<int>::iterator i;
-    map<pair<int, char>, int>::iterator j;
-    for (i = aut2.acceptStates.begin(); i != aut2.acceptStates.end(); i++) {
+    for (auto i = aut2.acceptStates.begin(); i != aut2.acceptStates.end(); i++) {
         unionAutomaton.makeAcceptState(statesAmount + *i);
     }
-    for (j = aut2.transitionMap.begin(); j != aut2.transitionMap.end(); j++) {
+    for (auto j = aut2.transitionMap.begin(); j != aut2.transitionMap.end(); j++) {
         unionAutomaton.addTransition(j->first.first + statesAmount, j->first.second, j->second + statesAmount);
     }
     map<int, int> optimizationMap = unionAutomaton.optimize();
     return optimizationMap.at(startStateIndex) == optimizationMap.at(aut2.startStateIndex + statesAmount);
 }
 
-finiteAutomaton finiteAutomaton::operator%(finiteAutomaton &aut) {
+finiteAutomaton finiteAutomaton::operator%(const finiteAutomaton &aut) {
     vector<pair<int, int>> statePairs;
     finiteAutomaton newAut;
     newAut.statesAmount = statesAmount * aut.statesAmount;
@@ -229,7 +227,7 @@ finiteAutomaton finiteAutomaton::operator%(finiteAutomaton &aut) {
     return newAut;
 }
 
-ostream & operator<<(ostream &os, finiteAutomaton &aut) {
+ostream & operator<<(ostream &os,  finiteAutomaton &aut) {
     set<int>::iterator i;
     map<pair<int, char>, int>::iterator j;
     os << aut.statesAmount << " states (0-" << aut.statesAmount - 1 << ")" << endl; 

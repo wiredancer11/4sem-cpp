@@ -28,17 +28,17 @@ public:
     void changeTransition(int state1, char c, std::set<int> states);
     void delTransition(int state1, char c, int state2);
 
-    void doEpsilonTransitions(std::set<int> &activeStates);
+    void doEpsilonTransitions(std::set<int> &activeStates) const;
 
     void renumberStates(std::map<int, int> renumMap);
 
     bool operator()(std::string s);
-    void operator=(nondetAutomaton &aut);
-    nondetAutomaton operator+(nondetAutomaton &aut);
-    nondetAutomaton operator*(nondetAutomaton &aut);
+    void operator=(const nondetAutomaton &aut);
+    nondetAutomaton operator+(const nondetAutomaton &aut);
+    nondetAutomaton operator*(const nondetAutomaton &aut);
     nondetAutomaton operator*();
-    finiteAutomaton operator!();
-    finiteAutomaton operator%(nondetAutomaton &aut);
+    finiteAutomaton operator!() const;
+    finiteAutomaton operator%(const nondetAutomaton &aut);
 
 
     friend std::ostream& operator<<(std::ostream& os, nondetAutomaton& aut);

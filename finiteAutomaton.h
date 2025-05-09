@@ -36,8 +36,8 @@ public:
 
     bool operator()(std::string s);
     void operator=(const finiteAutomaton& aut);
-    bool operator==(finiteAutomaton& aut2);
-    finiteAutomaton operator%(finiteAutomaton& aut);
+    bool operator==(const finiteAutomaton& aut2);
+    finiteAutomaton operator%(const finiteAutomaton& aut);
 
     friend std::ostream& operator<<(std::ostream& os, finiteAutomaton& aut);
 };
