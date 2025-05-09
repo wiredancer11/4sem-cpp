@@ -288,6 +288,10 @@ nondetAutomaton nondetAutomaton::operator*() {
 }
 
 
+finiteAutomaton nondetAutomaton::operator%(nondetAutomaton &aut) {
+        return !*this % !aut;
+}
+
 
 ostream & operator<<(ostream &os, nondetAutomaton &aut) {
     set<int> transitionStates;

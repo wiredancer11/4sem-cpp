@@ -38,6 +38,7 @@ public:
     nondetAutomaton operator*(nondetAutomaton &aut);
     nondetAutomaton operator*();
     finiteAutomaton operator!();
+    finiteAutomaton operator%(nondetAutomaton &aut);
 
 
     friend std::ostream& operator<<(std::ostream& os, nondetAutomaton& aut);

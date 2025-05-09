@@ -1,5 +1,11 @@
 #include "finiteAutomaton.h"
+#include <vector>
 using namespace std;
+
+int pairToNumber(int i, int j, int size2) {
+    return j + i * size2;
+}
+
 finiteAutomaton::finiteAutomaton() {
     statesAmount = 0;
     startStateIndex = 0;
@@ -198,6 +204,29 @@ bool finiteAutomaton::operator==(finiteAutomaton& aut2) {
     }
     map<int, int> optimizationMap = unionAutomaton.optimize();
     return optimizationMap.at(startStateIndex) == optimizationMap.at(aut2.startStateIndex + statesAmount);
+}
+
+finiteAutomaton finiteAutomaton::operator%(finiteAutomaton &aut) {
+    vector<pair<int, int>> statePairs;
+    finiteAutomaton newAut;
+    newAut.statesAmount = statesAmount * aut.statesAmount;
+    for (int i = 0; i < statesAmount; i++) {
+        for (int j = 0; j < aut.statesAmount; j++) {
+            if (i == startStateIndex &&  j == aut.startStateIndex) 
+                newAut.setStartState(pairToNumber(i, j, aut.statesAmount));
+            if (acceptStates.count(i) > 0 && aut.acceptStates.count(j) > 0) 
+                newAut.makeAcceptState(pairToNumber(i, j, aut.statesAmount));
+            for (const auto & transition: transitionMap) {
+                if (transition.first.first == i && aut.transitionMap.count({j, transition.first.second}) > 0) {
+                    newAut.addTransition(pairToNumber(i, j, aut.statesAmount), transition.first.second,
+                     pairToNumber(transition.second, aut.transitionMap.at({j, transition.first.second}),
+                      aut.statesAmount));
+                }
+            }
+
+        }
+    }
+    return newAut;
 }
 
 ostream & operator<<(ostream &os, finiteAutomaton &aut) {
