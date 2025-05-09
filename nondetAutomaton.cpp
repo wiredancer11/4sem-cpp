@@ -275,6 +275,18 @@ nondetAutomaton nondetAutomaton::operator*(nondetAutomaton &aut) {
 
 }
 
+nondetAutomaton nondetAutomaton::operator*() {
+    nondetAutomaton newAut = nondetAutomaton(*this);
+    newAut.addState();
+    newAut.addTransition(statesAmount - 1, '\0', startStateIndex);
+    for (const auto & state : acceptStates) {
+        newAut.addTransition(state, '\0', startStateIndex);
+    }
+    newAut.setStartState(statesAmount - 1);
+    newAut.makeAcceptState(statesAmount - 1);
+    return newAut;
+}
+
 
 
 ostream & operator<<(ostream &os, nondetAutomaton &aut) {

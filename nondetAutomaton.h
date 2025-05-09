@@ -36,6 +36,7 @@ public:
     void operator=(nondetAutomaton &aut);
     nondetAutomaton operator+(nondetAutomaton &aut);
     nondetAutomaton operator*(nondetAutomaton &aut);
+    nondetAutomaton operator*();
     finiteAutomaton operator!();
 
 
