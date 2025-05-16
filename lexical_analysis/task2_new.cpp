@@ -135,7 +135,6 @@ void lex(string s) {
     if (state == 8) cout << "\nERROR";
 }
 
-
 int main() {
     string s;
     getline(cin, s);

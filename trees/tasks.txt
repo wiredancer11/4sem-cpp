@@ -1,0 +1,128 @@
+#1
+Терминальные символы: "start", "east", "west", "north", "south"
+Нетерминальные символы: <path>
+Стартовый нетерминальный: <path>
+Продукции:
+<path> ::= <path>"start" : x = 0, y = 0 |
+            <path> "east": x = path.x + 1, y = path.y |
+            <path> "west": x = path.x - 1, y = path.y |
+            <path> "north" : x = path.x, y = path.y + 1 |
+            <path> "south": x = path.x, y = path.y - 1 |
+            lambda : x = 0, y = 0
+
+#2
+if x==0 then if y==0 then y=1 else x=1
+<if-statement>, <statement>, <closed-statement>, <condition> 
+"if", "else, "then" ...
+<if-statement> ::= "if" <condition> "then" <statement> |
+                    "if" <condition> "then" <closed-statement> "else" <statement>
+
+#3
+
+Терминальные символы: "I", "V", "X", "L", "D", "C" , "M"
+Нетерминальные символы: <number> ,<thousands>,  <hundreds>, <tens>,
+ <number_no_thousands>, <number_no_hundreds>, <number_no_tens>   
+Стартовый нетерминальный: <number>
+Продукции:
+
+<number> ::= <thousands><number_no_thousands> : value = thousands1.value + number_no_thousands.value |
+                <number_no_thousands> : value = number_no_thousands.value
+
+<thousands>::= "M" : value = 1000  |
+                "M"M" : value = 2000 |
+                "M""M""M" : value = 3000
+
+<number_no_thousands> ::= <hundreds><number_no_hundreds> : value = hundreds.value + number_no_hundreds.value
+                            <number_no_hundreds> : value = number_no_hundreds.value
+
+<hundreds> ::= "C" : value = 100 |
+            "CC" : value = 200 |
+            "CCC" : value = 300 |
+            "CD" : value = 400 |
+            "D" : value = 500 |
+            "DC" : value = 600 |
+            "DCC" : value = 700 |
+            "DCCC" : value = 800 |
+            "CM" : value = 900 
+
+<number_no_hundreds> ::= <tens><number_no_tens> : value = ten.value + number_no_tens.value |
+                            <number_no_tens> : value = number_no_tens.value
+
+<tens> :: = "X" : value = 10 |
+            "XX" : value = 20 |
+            "XXX" : value = 30 |
+            "XL" : value = 40 |
+            "L" : value = 50 |
+            "LX" : value = 60 |
+            "LXX" : value = 70 |
+            "LXXX" : value = 80 |
+            "XC" : value = 90 
+
+<number_no_tens> :: = "I" : value = 10 |
+            "II" : value = 20 |
+            "III" : value = 30 |
+            "IV" : value = 40 |
+            "V" : value = 50 |
+            "VI" : value = 60 |
+            "VII" : value = 70 |
+            "VIII" : value = 80 |
+            "IX" : value = 90 
+
+#4
+
+Стартовый: <or>
+
+<or> :: = <and> "|" <or> : result = or.result || and.result |
+            <and> : result = and.result
+
+<and> :: = <negation> "&" <and> : result = negation.result && and.result |
+            <negation> : result = negation.result
+
+<negation> ::= "!" <compare> : result = !(compare.result) |
+                <compare> : result = compare.result 
+
+
+<compare> ::= <expression:1> "<" <expression:2> : result = expression:1.value < expression:2.value |
+            <expression:1> "=" <expression:2> : result = expression:1.value == expression:2.value |
+            <expression:1> ">" <expression:2> : result = expression:1.value > expression:2.value |
+                "(" <or> ")" : result = or.result
+
+
+<expression> ::= <term> : value=<term>.value |
+                <expression> "+" <term> : value=<expression>.value+<term>.value |
+                <expression> "-" <term> : value=<expression>.value-<term>.value
+
+<term> ::= <factor> : value=<factor>.value |
+          <term> "*" <factor> : value=<term>.value*<factor>.value |
+          <term> "/" <factor> : value=<term>.value/<factor>.value
+
+<factor> ::= 
+            <expon> "^" <factor> : value = expon.value ** factor.value |
+            <expon> : value = expon.value
+
+<expon> :: = "s" <expon> : value = sin(expon.value) |
+                "c" <expon> : value = cos(expon.value) |
+                <number> : value = number.value |
+                "(" <expression> ")" : value = expression.value
+
+<number> ::= <integer> : value = integer.value |
+                <integer> "." <fractional> : value = integer.value + fractional.value
+
+<integer> ::= <digit> : value=<digit>.value |
+            <integer> <digit> : value=10*integer.value + digit.value
+
+<fractional> ::= <digit><fractional> : value = digit.value * 10^(-1) + fractional.value * 10^(-1) |
+                    <digit> : value = digit.value * 10^(-1)
+
+<digit> ::= "0" : value=0
+          | "1" : value=1
+          | "2" : value=2
+          | "3" : value=3
+          | "4" : value=4
+          | "5" : value=5
+          | "6" : value=6
+          | "7" : value=7
+          | "8" : value=8
+          | "9" : value=9
+
+            
